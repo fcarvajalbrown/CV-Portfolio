@@ -1,4 +1,7 @@
-name: Build CV (LaTeX) + Next.js Export + Deploy to GitHub Pages
+name: Build CV (LaTeX) + Next.js Export
+
+# Fork sin deploy: este repo compila para verificar, no publica.
+# El sitio lo publica el upstream (Noothowl/CV-Portfolio).
 
 on:
   push:
@@ -7,11 +10,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: "build"
   cancel-in-progress: true
 
 jobs:
@@ -45,29 +46,9 @@ jobs:
           mkdir -p apps/web/public
           cp ./martinchipoco-cv.pdf apps/web/public/cv.pdf
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
       - name: Build static export
         env:
           NEXT_PUBLIC_BASE_PATH: /CV-Portfolio
           NEXT_PUBLIC_SITE_URL: https://fcarvajalbrown.github.io/CV-Portfolio
         working-directory: apps/web
         run: npm run build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/web/out
-
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
