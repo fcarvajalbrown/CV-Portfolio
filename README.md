@@ -47,6 +47,15 @@ Every push to `main` will trigger:
   `https://<your-username>.github.io/CV-Portfolio/`
 
 ### Note:
+If you fork this, set both env vars in `.github/workflows/pages.yml` to your own values:
+
+```yaml
+NEXT_PUBLIC_BASE_PATH: /YourRepoName
+NEXT_PUBLIC_SITE_URL: https://your-username.github.io/YourRepoName
+```
+
+`NEXT_PUBLIC_SITE_URL` is what the canonical URLs, the Open Graph tags and `sitemap.xml` are built from, so leaving it pointing at someone else's site will send crawlers and link previews there.
+
 If you change the repository name, update the paths in `next.config.mjs`:
 ```js
 export default {

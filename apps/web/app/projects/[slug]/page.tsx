@@ -1,9 +1,7 @@
-import { listProjectSlugs, readProjectFrontMatter, getAllProjectFrontMatters } from "@/lib/projects-content";
-import type { ProjectFrontMatter, LegacyProject } from "@/types/projects";
+import type { Metadata } from "next";
+import { listProjectSlugs, readProjectFrontMatter } from "@/lib/projects-content";
 import { publicPath } from "@/lib/publicPath";
-import { Card } from "@/components/Card";
-import { Navbar } from "@/components//Navbar";
-import { Footer } from "@/components//Footer";
+import { SITE_AUTHOR, SITE_IMAGE, SITE_NAME, absoluteUrl } from "@/lib/site";
 import BackButton from "@/components/BackButton";
 
 type Params = { params: { slug: string } };
@@ -13,28 +11,40 @@ export function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
+function resolveSlug(params?: Params["params"]) {
+  return decodeURIComponent((params?.slug ?? "").toString());
+}
 
-function mapMetaToLegacy(meta: ProjectFrontMatter): LegacyProject {
-  const thumbnail = meta.media?.hero?.ref
-    ? publicPath(meta.media.hero.ref)      // 👈 aquí
-    : publicPath("/images/placeholder.jpg");
+export function generateMetadata({ params }: Params): Metadata {
+  const meta = readProjectFrontMatter(resolveSlug(params));
+  if (!meta) return { title: "Project not found" };
+
+  const url = absoluteUrl(`/projects/${meta.slug}`);
 
   return {
-    id: meta.slug,
     title: meta.title,
-    period: { start: meta.period },
-    thumbnail,
-    summary: meta.shortDescription,
-    description: "",
-    tags: meta.tags.map((t) => ({ text: t })),
-    links: { page: `/projects/${meta.slug}` },
+    description: meta.shortDescription,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      siteName: SITE_NAME,
+      title: `${meta.title} — ${SITE_AUTHOR}`,
+      description: meta.shortDescription,
+      url,
+      images: [
+        {
+          url: absoluteUrl(SITE_IMAGE.path),
+          width: SITE_IMAGE.width,
+          height: SITE_IMAGE.height,
+          alt: meta.title,
+        },
+      ],
+    },
   };
 }
 
-
 export default function ProjectDetail({ params }: Params) {
-  const slug = decodeURIComponent((params?.slug ?? "").toString());
-  const meta = readProjectFrontMatter(slug);
+  const meta = readProjectFrontMatter(resolveSlug(params));
   if (!meta) return <div style={{ padding: 24 }}>Project not found.</div>;
 
   return (
@@ -43,7 +53,7 @@ export default function ProjectDetail({ params }: Params) {
         //ToDO: Navbar
       }
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-        <BackButton fallback="/projects" />
+        <BackButton fallback="/" />
         <h1 className="card__title" style={{ margin: 0 }}>{meta.title}</h1>
       </div>
 
