@@ -12,6 +12,14 @@ export const SITE_DESCRIPTION = `${SITE_ROLE} — Site for Projects & CV`;
 // Preview image used by link unfurlers (LinkedIn, Discord, WhatsApp, X).
 export const SITE_IMAGE = { path: "/images/icon.png", width: 1024, height: 1024 };
 
+// Profiles that belong to the same person. Search engines use these to tie the
+// site and the profiles together as one entity, so they must match the links in
+// the navbar exactly.
+export const SITE_PROFILES = [
+  "https://github.com/Noothowl",
+  "https://www.linkedin.com/in/martín-jesús-chipoco",
+];
+
 export function absoluteUrl(p: string = "/") {
   return `${SITE_URL}${p.startsWith("/") ? p : `/${p}`}`;
 }

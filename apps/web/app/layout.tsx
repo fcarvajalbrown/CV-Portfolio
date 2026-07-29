@@ -7,10 +7,22 @@ import {
   SITE_ROLE,
   SITE_DESCRIPTION,
   SITE_IMAGE,
+  SITE_PROFILES,
   absoluteUrl,
 } from '@/lib/site';
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE_AUTHOR,
+  jobTitle: SITE_ROLE,
+  url: absoluteUrl('/'),
+  image: absoluteUrl(SITE_IMAGE.path),
+  knowsAbout: ['Unreal Engine', 'C++', 'Blueprints', 'Game development'],
+  sameAs: SITE_PROFILES,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -65,6 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
         <div
           id="bg-blur"
           style={{
