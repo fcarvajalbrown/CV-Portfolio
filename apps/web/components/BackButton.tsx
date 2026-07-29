@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export default function BackButton({ fallback = "/projects" }: { fallback?: string }) {
+export default function BackButton({ fallback = "/" }: { fallback?: string }) {
   const router = useRouter();
 
   function goBack() {
