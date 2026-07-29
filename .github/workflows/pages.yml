@@ -51,6 +51,7 @@ jobs:
       - name: Build static export
         env:
           NEXT_PUBLIC_BASE_PATH: /CV-Portfolio
+          NEXT_PUBLIC_SITE_URL: https://fcarvajalbrown.github.io/CV-Portfolio
         working-directory: apps/web
         run: npm run build
 
